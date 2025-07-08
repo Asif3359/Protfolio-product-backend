@@ -21,12 +21,12 @@
     "express": "~4.16.1",
     "form-data": "^4.0.2",
     "http-errors": "~1.6.3",
-    "jade": "~1.11.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.16.0",
     "mongoose": "^8.15.0",
     "morgan": "~1.9.1",
-    "multer": "^2.0.0"
+    "multer": "^2.0.0",
+    "pug": "^3.0.3"
   },
   "devDependencies": {
     "jest": "^29.7.0",
