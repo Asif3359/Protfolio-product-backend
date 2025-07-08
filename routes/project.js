@@ -1,0 +1,210 @@
+const express = require('express');
+const router = express.Router();
+const Project = require('../models/Project');
+const auth = require('../middleware/auth');
+const multer = require('multer');
+const path = require('path');
+
+// Configure multer for project image uploads
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/uploads/projects/')
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname))
+    }
+});
+
+const upload = multer({ storage: storage });
+
+// Get all projects
+router.get('/', async (req, res) => {
+    try {
+        const projects = await Project.find().sort({ startDate: -1 });
+        res.json(projects);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Create project
+router.post('/', auth, upload.single('image'), async (req, res) => {
+    try {
+        const projectData = { ...req.body };
+        if (req.file) {
+            projectData.image = '/uploads/projects/' + req.file.filename;
+        }
+        const project = new Project(projectData);
+        await project.save();
+        res.status(201).json(project);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+// Get project by id
+router.get('/:id', async (req, res) => {
+    try {
+        const project = await Project.findById(req.params.id);
+        if (!project) {
+            return res.status(404).json({ error: 'Project not found' });
+        }
+        res.json(project);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Update project// 
+// Helper to extract array fields from req.body
+function extractArray(field, body) {
+    const keys = Object.keys(body).filter(key => key.startsWith(field + "["));
+    let arr = [];
+    if (keys.length === 0 && body[field]) {
+      arr = [body[field]];
+    } else {
+      arr = keys
+        .sort()
+        .map(key => body[key])
+        .filter(Boolean);
+    }
+    // Flatten and parse any stringified arrays
+    arr = arr.flatMap(item => {
+      if (typeof item === "string" && item.startsWith("[") && item.endsWith("]")) {
+        try {
+          const parsed = JSON.parse(item);
+          return Array.isArray(parsed) ? parsed : [item];
+        } catch {
+          return [item];
+        }
+      }
+      return [item];
+    });
+    // FINAL FLATTEN: If the result is [["a","b"]], flatten to ["a","b"]
+    return arr.flat();
+  }
+  
+  router.patch('/:id', auth, upload.single('image'), async (req, res) => {
+    const updates = Object.keys(req.body);
+    const allowedUpdates = [
+      'title', 'description', 'technologies', 'startDate',
+      'endDate', 'link', 'githubLink', 'features', 'status'
+    ];
+    const isValidOperation = updates.every(update =>
+      allowedUpdates.includes(update) ||
+      allowedUpdates.some(field => update.startsWith(field + "["))
+    );
+  
+    if (!isValidOperation) {
+      return res.status(400).json({ error: 'Invalid updates!' });
+    }
+  
+    try {
+      const project = await Project.findById(req.params.id);
+      if (!project) {
+        return res.status(404).json({ error: 'Project not found' });
+      }
+  
+      if (req.file) {
+        project.image = '/uploads/projects/' + req.file.filename;
+      }
+  
+      // Set normal fields, with type conversion
+      allowedUpdates.forEach(update => {
+        if (update === 'technologies' || update === 'features') return;
+        if (req.body[update] !== undefined) {
+          if (update === 'startDate' || update === 'endDate') {
+            project[update] = req.body[update] ? new Date(req.body[update]) : undefined;
+          } else {
+            project[update] = req.body[update];
+          }
+        }
+      });
+  
+      // Set array fields
+      project.technologies = extractArray('technologies', req.body);
+      project.features = extractArray('features', req.body);
+  
+      await project.save();
+      res.json(project);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  // Update sue Project with PUT
+  router.put('/:id', auth, upload.single('image'), async (req, res) => {
+    try {
+      const updateData = { ...req.body };
+  
+      // Defensive: Always extract arrays, even if only one value
+      updateData.technologies = extractArray('technologies', req.body);
+      updateData.features = extractArray('features', req.body);
+  
+      // Defensive: Remove empty string from arrays (from default [""] in frontend)
+      updateData.technologies = updateData.technologies.filter(Boolean);
+      updateData.features = updateData.features.filter(Boolean);
+  
+      // Defensive: Convert dates, but only if valid
+      if (updateData.startDate) {
+        const d = new Date(updateData.startDate);
+        if (isNaN(d.getTime())) {
+          return res.status(400).json({ error: 'Invalid startDate.' });
+        }
+        updateData.startDate = d;
+      }
+      if (updateData.endDate) {
+        const d = new Date(updateData.endDate);
+        if (isNaN(d.getTime())) {
+          return res.status(400).json({ error: 'Invalid endDate.' });
+        }
+        updateData.endDate = d;
+      }
+  
+      // Defensive: Check required fields
+      const requiredFields = ['title', 'description', 'technologies', 'startDate', 'ownerEmail'];
+      for (const field of requiredFields) {
+        if (
+          updateData[field] === undefined ||
+          updateData[field] === "" ||
+          (Array.isArray(updateData[field]) && updateData[field].length === 0)
+        ) {
+          return res.status(400).json({ error: `Field '${field}' is required.` });
+        }
+      }
+  
+      // Defensive: Check status enum
+      const allowedStatus = ['In Progress', 'Completed', 'On Hold'];
+      if (updateData.status && !allowedStatus.includes(updateData.status)) {
+        return res.status(400).json({ error: 'Invalid status value.' });
+      }
+  
+      if (req.file) {
+        updateData.image = '/uploads/projects/' + req.file.filename;
+      }
+  
+      const project = await Project.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
+      if (!project) {
+        return res.status(404).json({ error: 'Project not found' });
+      }
+      res.json(project);
+    } catch (error) {
+      // Log the error for debugging
+      console.error('PUT /project/:id error:', error);
+      res.status(400).json({ error: error.message });
+    }
+  });
+// Delete project
+router.delete('/:id', auth, async (req, res) => {
+    try {
+        const project = await Project.findByIdAndDelete(req.params.id);
+        if (!project) {
+            return res.status(404).json({ error: 'Project not found' });
+        }
+        res.json(project);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+module.exports = router;

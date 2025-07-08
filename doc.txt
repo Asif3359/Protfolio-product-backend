@@ -1,0 +1,9 @@
+protfolioCollection
+
+protfolioProduct
+
+57adiRUH_DEQfNG
+
+npm install mongodb
+
+mongodb+srv://protfolioProduct:57adiRUH_DEQfNG@cluster0.7ylhegt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
