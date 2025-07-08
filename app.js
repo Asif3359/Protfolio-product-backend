@@ -15,10 +15,7 @@ mongoose.connect(process.env.MONGODB_URI)
 .catch(err => console.log('MongoDB Connection Error:', err));
 
 var app = express();
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+
 
 app.use(cors({ origin: 'http://localhost:3001', credentials: true }));
 // view engine setup
