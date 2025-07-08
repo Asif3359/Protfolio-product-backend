@@ -17,7 +17,23 @@ mongoose.connect(process.env.MONGODB_URI)
 var app = express();
 
 
-app.use(cors({ origin: 'http://localhost:3001', credentials: true }));
+const allowedOrigins = [
+  'http://localhost:3001',
+  'https://protfolio-product-backend.vercel.app' // (optional, if you want to allow direct API calls)
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
+}));
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
