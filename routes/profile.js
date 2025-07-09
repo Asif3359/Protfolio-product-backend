@@ -4,7 +4,7 @@ const Profile = require('../models/Profile');
 const auth = require('../middleware/auth');
 const multer = require('multer');
 const path = require('path');
-const { connectDB, isConnected } = require('../config/database');
+
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -21,10 +21,6 @@ const upload = multer({ storage: storage });
 // Get profile
 router.get('/', async (req, res) => {
     try {
-        // Ensure database is connected
-        if (!isConnected()) {
-            await connectDB();
-        }
         
         const profile = await Profile.findOne();
         res.json(profile);
@@ -38,10 +34,7 @@ router.post('/', auth, upload.fields([
     { name: 'heroPicture', maxCount: 1 }
 ]), async (req, res) => {
     try {
-        // Ensure database is connected
-        if (!isConnected()) {
-            await connectDB();
-        }
+        
         const profileData = { ...req.body };
 
         // Handle file uploads
