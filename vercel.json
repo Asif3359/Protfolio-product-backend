@@ -1,20 +1,34 @@
 {
   "version": 2,
   "builds": [
-    { 
-      "src": "app.js", 
+    {
+      "src": "bin/www",
       "use": "@vercel/node",
       "config": {
-        "maxLambdaSize": "15mb"
+        "maxLambdaSize": "50mb"
       }
     }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "app.js" }
+    {
+      "src": "/api/(.*)",
+      "dest": "bin/www"
+    },
+    {
+      "src": "/public/(.*)",
+      "dest": "/public/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "bin/www"
+    }
   ],
   "functions": {
-    "app.js": {
+    "bin/www": {
       "maxDuration": 30
     }
+  },
+  "env": {
+    "NODE_ENV": "production"
   }
 }
