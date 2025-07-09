@@ -24,3 +24,31 @@ curl -X GET http://localhost:3000/api/award/AWARD_ID
 
 curl -X GET http://localhost:3000/api/research
 curl -X GET http://localhost:3000/api/research/RESEARCH_ID
+
+
+
+
+
+
+curl -X GET https://protfolio-product-backend.vercel.app/api/profile
+
+curl -X GET https://protfolio-product-backend.vercel.app/api/experience
+curl -X GET https://protfolio-product-backend.vercel.app/api/experience/EXPERIENCE_ID
+
+curl -X GET https://protfolio-product-backend.vercel.app/api/project
+curl -X GET https://protfolio-product-backend.vercel.app/api/project/PROJECT_ID
+
+curl -X GET https://protfolio-product-backend.vercel.app/api/skill
+curl -X GET https://protfolio-product-backend.vercel.app/api/skill/SKILL_ID
+
+curl -X GET https://protfolio-product-backend.vercel.app/api/academic
+curl -X GET https://protfolio-product-backend.vercel.app/api/academic/ACADEMIC_ID
+
+curl -X GET https://protfolio-product-backend.vercel.app/api/certification
+curl -X GET https://protfolio-product-backend.vercel.app/api/certification/CERTIFICATION_ID
+
+curl -X GET https://protfolio-product-backend.vercel.app/api/award
+curl -X GET https://protfolio-product-backend.vercel.app/api/award/AWARD_ID
+
+curl -X GET https://protfolio-product-backend.vercel.app/api/research
+curl -X GET https://protfolio-product-backend.vercel.app/api/research/RESEARCH_ID

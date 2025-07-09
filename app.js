@@ -3,16 +3,15 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var mongoose = require('mongoose');
 require('dotenv').config();
 
 var cors = require('cors');
 
+// Import database configuration
+const { connectDB } = require('./config/database');
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI)
-.then(() => console.log('MongoDB Connected'))
-.catch(err => console.log('MongoDB Connection Error:', err));
+// Connect to MongoDB
+connectDB().catch(console.error);
 
 var app = express();
 
