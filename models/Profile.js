@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const profileSchema = new mongoose.Schema(
   {
+    name: {
+      type: String,
+      required: true,
+    },
     profilePicture: {
       type: String,
       required: true,
