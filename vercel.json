@@ -11,10 +11,5 @@
   ],
   "routes": [
     { "src": "/(.*)", "dest": "app.js" }
-  ],
-  "functions": {
-    "app.js": {
-      "maxDuration": 30
-    }
-  }
+  ]
 }
