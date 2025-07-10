@@ -16,7 +16,8 @@ var app = express();
 
 const allowedOrigins = [
   'http://localhost:3001',
-  'https://protfolio-product-backend.vercel.app' // (optional, if you want to allow direct API calls)
+  'https://protfolio-dashboard-rho.vercel.app',
+  'https://protfolio-product-backend.vercel.app'
 ];
 
 app.use(cors({
