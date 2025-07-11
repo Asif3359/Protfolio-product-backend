@@ -64,7 +64,7 @@ curl -X PATCH http://localhost:3000/api/admin/profile \
 
 ### Get Profile
 ```bash
-curl -X GET http://localhost:3000/api/profile
+curl -X GET https://protfolio-product-backend.vercel.app/api/profile
 ```
 
 ### Create/Update Profile
