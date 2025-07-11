@@ -4,19 +4,25 @@ const Profile = require('../models/Profile');
 const auth = require('../middleware/auth');
 const multer = require('multer');
 const path = require('path');
+const cloudinary = require('../cloudinary'); // adjust path as needed
 
 
 // Configure multer for file uploads
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public/uploads/')
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname))
-    }
-});
-
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
+
+function uploadToCloudinary(buffer, folder) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url);
+      }
+    );
+    stream.end(buffer);
+  });
+}
 
 // Get profile
 router.get('/', async (req, res) => {
@@ -37,13 +43,15 @@ router.post('/', auth, upload.fields([
         
         const profileData = { ...req.body };
 
-        // Handle file uploads
+        // Handle file uploads with Cloudinary
         if (req.files) {
             if (req.files.profilePicture) {
-                profileData.profilePicture = '/uploads/' + req.files.profilePicture[0].filename;
+                const result = await uploadToCloudinary(req.files.profilePicture[0].buffer, 'profile_pictures');
+                profileData.profilePicture = result;
             }
             if (req.files.heroPicture) {
-                profileData.heroPicture = '/uploads/' + req.files.heroPicture[0].filename;
+                const result = await uploadToCloudinary(req.files.heroPicture[0].buffer, 'hero_pictures');
+                profileData.heroPicture = result;
             }
         }
 
@@ -112,21 +120,25 @@ router.patch('/', auth, upload.fields([
         res.status(400).json({ error: error.message });
     }
 });
+
 // Update profile with PUT
 router.put('/', auth, upload.fields([
     { name: 'profilePicture', maxCount: 1 },
     { name: 'heroPicture', maxCount: 1 }
 ]), async (req, res) => {
     try {
+        
         const profileData = { ...req.body };
 
-        // Handle file uploads
+        // Handle file uploads with Cloudinary
         if (req.files) {
             if (req.files.profilePicture) {
-                profileData.profilePicture = '/uploads/' + req.files.profilePicture[0].filename;
+                const result = await uploadToCloudinary(req.files.profilePicture[0].buffer, 'profile_pictures');
+                profileData.profilePicture = result;
             }
             if (req.files.heroPicture) {
-                profileData.heroPicture = '/uploads/' + req.files.heroPicture[0].filename;
+                const result = await uploadToCloudinary(req.files.heroPicture[0].buffer, 'hero_pictures');
+                profileData.heroPicture = result;
             }
         }
 

@@ -4,17 +4,23 @@ const Project = require('../models/Project');
 const auth = require('../middleware/auth');
 const multer = require('multer');
 const path = require('path');
+const cloudinary = require('../cloudinary'); // adjust path as needed
+
+function uploadToCloudinary(buffer, folder) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url);
+      }
+    );
+    stream.end(buffer);
+  });
+}
 
 // Configure multer for project image uploads
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public/uploads/projects/')
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname))
-    }
-});
-
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // Get all projects
@@ -32,7 +38,7 @@ router.post('/', auth, upload.single('image'), async (req, res) => {
     try {
         const projectData = { ...req.body };
         if (req.file) {
-            projectData.image = '/uploads/projects/' + req.file.filename;
+            projectData.image = await uploadToCloudinary(req.file.buffer, 'project_images');
         }
         const project = new Project(projectData);
         await project.save();
@@ -106,7 +112,7 @@ function extractArray(field, body) {
       }
   
       if (req.file) {
-        project.image = '/uploads/projects/' + req.file.filename;
+        project.image = await uploadToCloudinary(req.file.buffer, 'project_images');
       }
   
       // Set normal fields, with type conversion
@@ -180,7 +186,7 @@ function extractArray(field, body) {
       }
   
       if (req.file) {
-        updateData.image = '/uploads/projects/' + req.file.filename;
+        updateData.image = await uploadToCloudinary(req.file.buffer, 'project_images');
       }
   
       const project = await Project.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
