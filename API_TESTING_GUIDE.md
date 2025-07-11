@@ -33,7 +33,7 @@ curl -X POST http://localhost:3000/api/admin/register \
 
 ### Login Admin
 ```bash
-curl -X POST http://localhost:3000/api/admin/login \
+curl -X POST https://protfolio-product-backend.vercel.app/api/admin/login \
   -H "Content-Type: application/json" \
   -d '{
     "username": "admin",
@@ -64,7 +64,7 @@ curl -X PATCH http://localhost:3000/api/admin/profile \
 
 ### Get Profile
 ```bash
-curl -X GET https://protfolio-product-backend.vercel.app/api/profile
+curl -X GET http://localhost:3000/api/profile
 ```
 
 ### Create/Update Profile
