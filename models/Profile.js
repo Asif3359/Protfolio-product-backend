@@ -53,6 +53,38 @@ const profileSchema = new mongoose.Schema(
       },
       cvLink: String,
     },
+    backgroundImageForProfilePage: {
+      type: String,
+      required: true,
+    },
+    backgroundImageForExperiencePage: {
+      type: String,
+      required: true,
+    },
+    backgroundImageForProjectsPage: {
+      type: String,
+      required: true,
+    },
+    backgroundImageForSkillsPage: {
+      type: String,
+      required: true,
+    },
+    backgroundImageForEducationPage: {
+      type: String,
+      required: true,
+    },
+    backgroundImageForResearchPage: {
+      type: String,
+      required: true,
+    },
+    backgroundImageForAwardsPage: {
+      type: String,
+      required: true,
+    },
+    backgroundImageForCertificationsPage: {
+      type: String,
+      required: true,
+    },
     ownerEmail: { type: String, required: true },
   },
   { timestamps: true }

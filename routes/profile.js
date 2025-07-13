@@ -37,7 +37,15 @@ router.get('/', async (req, res) => {
 });
 router.post('/', auth, upload.fields([
     { name: 'profilePicture', maxCount: 1 },
-    { name: 'heroPicture', maxCount: 1 }
+    { name: 'heroPicture', maxCount: 1 },
+    { name: 'backgroundImageForProfilePage', maxCount: 1 },
+    { name: 'backgroundImageForExperiencePage', maxCount: 1 },
+    { name: 'backgroundImageForProjectsPage', maxCount: 1 },
+    { name: 'backgroundImageForSkillsPage', maxCount: 1 },
+    { name: 'backgroundImageForEducationPage', maxCount: 1 },
+    { name: 'backgroundImageForResearchPage', maxCount: 1 },
+    { name: 'backgroundImageForAwardsPage', maxCount: 1 },
+    { name: 'backgroundImageForCertificationsPage', maxCount: 1 },
 ]), async (req, res) => {
     try {
         
@@ -53,6 +61,39 @@ router.post('/', auth, upload.fields([
                 const result = await uploadToCloudinary(req.files.heroPicture[0].buffer, 'hero_pictures');
                 profileData.heroPicture = result;
             }
+            if (req.files.backgroundImageForProfilePage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForProfilePage[0].buffer, 'background_images');
+                profileData.backgroundImageForProfilePage = result;
+            }
+            if (req.files.backgroundImageForExperiencePage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForExperiencePage[0].buffer, 'background_images');
+                profileData.backgroundImageForExperiencePage = result;
+            }
+            if (req.files.backgroundImageForProjectsPage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForProjectsPage[0].buffer, 'background_images');
+                profileData.backgroundImageForProjectsPage = result;
+            }
+            if (req.files.backgroundImageForSkillsPage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForSkillsPage[0].buffer, 'background_images');
+                profileData.backgroundImageForSkillsPage = result;
+            }
+            if (req.files.backgroundImageForEducationPage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForEducationPage[0].buffer, 'background_images');
+                profileData.backgroundImageForEducationPage = result;
+            }
+            if (req.files.backgroundImageForResearchPage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForResearchPage[0].buffer, 'background_images');
+                profileData.backgroundImageForResearchPage = result;
+            }
+            if (req.files.backgroundImageForAwardsPage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForAwardsPage[0].buffer, 'background_images');
+                profileData.backgroundImageForAwardsPage = result;
+            }
+            if (req.files.backgroundImageForCertificationsPage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForCertificationsPage[0].buffer, 'background_images');
+                profileData.backgroundImageForCertificationsPage = result;
+            }
+
         }
 
         // Defensive: Parse nested objects if sent as JSON strings (common with FormData)
@@ -84,7 +125,15 @@ router.post('/', auth, upload.fields([
 // Update profile
 router.patch('/', auth, upload.fields([
     { name: 'profilePicture', maxCount: 1 },
-    { name: 'heroPicture', maxCount: 1 }
+    { name: 'heroPicture', maxCount: 1 },
+    { name: 'backgroundImageForProfilePage', maxCount: 1 },
+    { name: 'backgroundImageForExperiencePage', maxCount: 1 },
+    { name: 'backgroundImageForProjectsPage', maxCount: 1 },
+    { name: 'backgroundImageForSkillsPage', maxCount: 1 },
+    { name: 'backgroundImageForEducationPage', maxCount: 1 },
+    { name: 'backgroundImageForResearchPage', maxCount: 1 },
+    { name: 'backgroundImageForAwardsPage', maxCount: 1 },
+    { name: 'backgroundImageForCertificationsPage', maxCount: 1 },
 ]), async (req, res) => {
     const updates = Object.keys(req.body);
     const allowedUpdates = [
@@ -111,6 +160,38 @@ router.patch('/', auth, upload.fields([
             if (req.files.heroPicture) {
                 profile.heroPicture = '/uploads/' + req.files.heroPicture[0].filename;
             }
+            if (req.files.backgroundImageForProfilePage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForProfilePage[0].buffer, 'background_images');
+                profile.backgroundImageForProfilePage = result;
+            }
+            if (req.files.backgroundImageForExperiencePage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForExperiencePage[0].buffer, 'background_images');
+                profile.backgroundImageForExperiencePage = result;
+            }
+            if (req.files.backgroundImageForProjectsPage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForProjectsPage[0].buffer, 'background_images');
+                profile.backgroundImageForProjectsPage = result;
+            }
+            if (req.files.backgroundImageForSkillsPage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForSkillsPage[0].buffer, 'background_images');
+                profile.backgroundImageForSkillsPage = result;
+            }
+            if (req.files.backgroundImageForEducationPage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForEducationPage[0].buffer, 'background_images');
+                profile.backgroundImageForEducationPage = result;
+            }
+            if (req.files.backgroundImageForResearchPage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForResearchPage[0].buffer, 'background_images');
+                profile.backgroundImageForResearchPage = result;
+            }
+            if (req.files.backgroundImageForAwardsPage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForAwardsPage[0].buffer, 'background_images');
+                profile.backgroundImageForAwardsPage = result;
+            }
+            if (req.files.backgroundImageForCertificationsPage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForCertificationsPage[0].buffer, 'background_images');
+                profile.backgroundImageForCertificationsPage = result;
+            }
         }
 
         updates.forEach(update => profile[update] = req.body[update]);
@@ -124,7 +205,16 @@ router.patch('/', auth, upload.fields([
 // Update profile with PUT
 router.put('/', auth, upload.fields([
     { name: 'profilePicture', maxCount: 1 },
-    { name: 'heroPicture', maxCount: 1 }
+    { name: 'heroPicture', maxCount: 1 },
+    { name: 'backgroundImageForProfilePage', maxCount: 1 },
+    { name: 'backgroundImageForExperiencePage', maxCount: 1 },
+    { name: 'backgroundImageForProjectsPage', maxCount: 1 },
+    { name: 'backgroundImageForSkillsPage', maxCount: 1 },
+    { name: 'backgroundImageForEducationPage', maxCount: 1 },
+    { name: 'backgroundImageForResearchPage', maxCount: 1 },
+    { name: 'backgroundImageForAwardsPage', maxCount: 1 },
+    { name: 'backgroundImageForCertificationsPage', maxCount: 1 },
+
 ]), async (req, res) => {
     try {
         
@@ -139,6 +229,38 @@ router.put('/', auth, upload.fields([
             if (req.files.heroPicture) {
                 const result = await uploadToCloudinary(req.files.heroPicture[0].buffer, 'hero_pictures');
                 profileData.heroPicture = result;
+            }
+            if (req.files.backgroundImageForProfilePage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForProfilePage[0].buffer, 'background_images');
+                profileData.backgroundImageForProfilePage = result;
+            }
+            if (req.files.backgroundImageForExperiencePage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForExperiencePage[0].buffer, 'background_images');
+                profileData.backgroundImageForExperiencePage = result;
+            }
+            if (req.files.backgroundImageForProjectsPage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForProjectsPage[0].buffer, 'background_images');
+                profileData.backgroundImageForProjectsPage = result;
+            }
+            if (req.files.backgroundImageForSkillsPage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForSkillsPage[0].buffer, 'background_images');
+                profileData.backgroundImageForSkillsPage = result;
+            }
+            if (req.files.backgroundImageForEducationPage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForEducationPage[0].buffer, 'background_images');
+                profileData.backgroundImageForEducationPage = result;
+            }
+            if (req.files.backgroundImageForResearchPage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForResearchPage[0].buffer, 'background_images');
+                profileData.backgroundImageForResearchPage = result;
+            }
+            if (req.files.backgroundImageForAwardsPage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForAwardsPage[0].buffer, 'background_images');
+                profileData.backgroundImageForAwardsPage = result;
+            }
+            if (req.files.backgroundImageForCertificationsPage) {
+                const result = await uploadToCloudinary(req.files.backgroundImageForCertificationsPage[0].buffer, 'background_images');
+                profileData.backgroundImageForCertificationsPage = result;
             }
         }
 
