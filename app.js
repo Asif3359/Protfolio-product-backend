@@ -17,7 +17,8 @@ var app = express();
 const allowedOrigins = [
   'http://localhost:3001',
   'https://protfolio-dashboard-rho.vercel.app',
-  'https://protfolio-product-backend.vercel.app'
+  'https://protfolio-product-backend.vercel.app',
+  'https://mdmehedihasansagor.vercel.app',
 ];
 
 app.use(cors({
