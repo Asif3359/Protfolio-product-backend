@@ -19,6 +19,7 @@ const allowedOrigins = [
   'https://protfolio-dashboard-rho.vercel.app',
   'https://protfolio-product-backend.vercel.app',
   'https://mdmehedihasansagor.vercel.app',
+  'https://mehedihasansagor.vercel.app',
 ];
 
 app.use(cors({
