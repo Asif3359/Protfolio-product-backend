@@ -16,6 +16,10 @@ const skillSchema = new mongoose.Schema({
         min: 1,
         max: 100
     },
+    logo: {
+        type: String,
+        required: true
+    },
     description: String,
     ownerEmail: { type: String, required: true },
 }, { timestamps: true });
