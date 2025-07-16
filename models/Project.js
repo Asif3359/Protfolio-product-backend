@@ -13,7 +13,8 @@ const projectSchema = new mongoose.Schema({
         type: String,
         required: true
     }],
-    image: String,
+    // image: String,
+    images: [String],
     startDate: {
         type: Date,
         required: true

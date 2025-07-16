@@ -17,6 +17,10 @@ const academicSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
+    logo: {
+        type: String,
+        required: true
+    },
     endDate: Date,
     description: String,
     achievements: [String],

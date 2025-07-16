@@ -34,11 +34,15 @@ router.get('/', async (req, res) => {
 });
 
 // Create project
-router.post('/', auth, upload.single('image'), async (req, res) => {
+router.post('/', auth, upload.array('images'), async (req, res) => {
     try {
         const projectData = { ...req.body };
         if (req.file) {
-            projectData.image = await uploadToCloudinary(req.file.buffer, 'project_images');
+          projectData.images = [];
+          for (const file of req.files) {
+              const url = await uploadToCloudinary(file.buffer, 'project_images');
+              projectData.images.push(url);
+          }
         }
         const project = new Project(projectData);
         await project.save();
@@ -90,7 +94,7 @@ function extractArray(field, body) {
     return arr.flat();
   }
   
-  router.patch('/:id', auth, upload.single('image'), async (req, res) => {
+  router.patch('/:id', auth, upload.array('images'), async (req, res) => {
     const updates = Object.keys(req.body);
     const allowedUpdates = [
       'title', 'description', 'technologies', 'startDate',
@@ -111,8 +115,12 @@ function extractArray(field, body) {
         return res.status(404).json({ error: 'Project not found' });
       }
   
-      if (req.file) {
-        project.image = await uploadToCloudinary(req.file.buffer, 'project_images');
+      if (req.files) {
+        project.images = [];
+        for (const file of req.files) {
+            const url = await uploadToCloudinary(file.buffer, 'project_images');
+            project.images.push(url);
+        }
       }
   
       // Set normal fields, with type conversion
@@ -139,7 +147,7 @@ function extractArray(field, body) {
   });
 
   // Update sue Project with PUT
-  router.put('/:id', auth, upload.single('image'), async (req, res) => {
+  router.put('/:id', auth, upload.array('images'), async (req, res) => {
     try {
       const updateData = { ...req.body };
   
@@ -185,8 +193,12 @@ function extractArray(field, body) {
         return res.status(400).json({ error: 'Invalid status value.' });
       }
   
-      if (req.file) {
-        updateData.image = await uploadToCloudinary(req.file.buffer, 'project_images');
+      if (req.files) {
+        updateData.images = [];
+        for (const file of req.files) {
+            const url = await uploadToCloudinary(file.buffer, 'project_images');
+            updateData.images.push(url);
+        }
       }
   
       const project = await Project.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
