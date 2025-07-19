@@ -25,11 +25,15 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODZjMmMzYjBiYjYyNzVjNmM3ZDk2OGI
 curl -X POST http://localhost:3000/api/admin/register \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "admin",
-    "email": "admin@example.com",
-    "password": "admin123"
+    "username": "mehedi.buet.me19",
+    "email": "mehedi.buet.me19@gmail.com",
+    "password": "me19#mehedi"
   }'
 ```
+
+curl.exe -X POST http://localhost:3000/api/admin/register `
+  -H "Content-Type: application/json" `
+  -d '{"username": "mehedi.buet.me19", "email": "mehedi.buet.me19@gmail.com", "password": "me19#mehedi"}'
 
 ### Login Admin
 ```bash
