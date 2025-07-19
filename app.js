@@ -18,7 +18,7 @@ const allowedOrigins = [
   'http://localhost:3001',
   'https://protfolio-dashboard-rho.vercel.app',
   'https://protfolio-product-backend.vercel.app',
-  'https://mdmehedihasansagar.vercel.app',
+  'https://mehedihasansagar.vercel.app',
   'https://mehedihasansagor.vercel.app',
 ];
 
