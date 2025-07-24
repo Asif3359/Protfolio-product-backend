@@ -67,7 +67,7 @@ router.get('/:id', async (req, res) => {
 // Update skill
 router.patch('/:id', auth, upload.single('logo'), async (req, res) => {
     const updates = Object.keys(req.body);
-    const allowedUpdates = ['name', 'category', 'proficiency', 'description', 'logo'];
+    const allowedUpdates = ['name', 'category', 'type', 'description', 'logo'];
     const isValidOperation = updates.every(update => allowedUpdates.includes(update));
 
     if (!isValidOperation) {
@@ -107,7 +107,8 @@ router.put('/:id', auth, upload.single('logo'), async (req, res) => {
         // Overwrite all updatable fields
         skill.name = req.body.name;
         skill.category = req.body.category;
-        skill.proficiency = req.body.proficiency;
+        skill.type = req.body.type;
+        // skill.proficiency = req.body.proficiency;
         skill.description = req.body.description;
         skill.ownerEmail = req.body.ownerEmail;
         if (req.file) {

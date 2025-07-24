@@ -2,7 +2,26 @@ const express = require('express');
 const router = express.Router();
 const Award = require('../models/Award');
 const auth = require('../middleware/auth');
+const multer = require('multer');
+const path = require('path');
+const cloudinary = require('../cloudinary'); // adjust path as needed
 
+// Configure multer for file uploads
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+function uploadToCloudinary(buffer, folder) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url);
+      }
+    );
+    stream.end(buffer);
+  });
+}
 // Get all awards
 router.get('/', async (req, res) => {
     try {
@@ -16,9 +35,11 @@ router.get('/', async (req, res) => {
 });
 
 // Create award
-router.post('/', auth, async (req, res) => {
+router.post('/', auth, upload.single('image'), async (req, res) => {
     try {
         const award = new Award(req.body);
+        const imageUrl = await uploadToCloudinary(req.file.buffer, 'awards');
+        award.image = imageUrl;
         await award.save();
         res.status(201).json(award);
     } catch (error) {
@@ -42,7 +63,7 @@ router.get('/:id', async (req, res) => {
 // Update award
 router.patch('/:id', auth, async (req, res) => {
     const updates = Object.keys(req.body);
-    const allowedUpdates = ['title', 'issuer', 'date', 'description', 'category', 'link'];
+    const allowedUpdates = ['title', 'issuer', 'date', 'description', 'category', 'link', 'image'];
     const isValidOperation = updates.every(update => allowedUpdates.includes(update));
 
     if (!isValidOperation) {
@@ -56,6 +77,10 @@ router.patch('/:id', auth, async (req, res) => {
         }
 
         updates.forEach(update => award[update] = req.body[update]);
+        if (req.file) {
+            const imageUrl = await uploadToCloudinary(req.file.buffer, 'awards');
+            award.image = imageUrl;
+        }
         await award.save();
         res.json(award);
     } catch (error) {
@@ -64,11 +89,17 @@ router.patch('/:id', auth, async (req, res) => {
 });
 
 // Update award (PUT)
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', auth, upload.single('image'), async (req, res) => {
     try {
+        let updateData = req.body;
+        // If req.file exists, upload and set image
+        if (req.file) {
+            const imageUrl = await uploadToCloudinary(req.file.buffer, 'awards');
+            updateData.image = imageUrl;
+        }
         const award = await Award.findByIdAndUpdate(
             req.params.id,
-            req.body,
+            updateData,
             { new: true, runValidators: true }
         );
         if (!award) {
