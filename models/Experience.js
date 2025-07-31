@@ -23,6 +23,7 @@ const experienceSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    images: [String],
     responsibilities: [String],
     achievements: [String],
     technologies: [String],
