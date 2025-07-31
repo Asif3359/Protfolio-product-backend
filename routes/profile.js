@@ -6,8 +6,6 @@ const multer = require('multer');
 const path = require('path');
 const cloudinary = require('../cloudinary'); // adjust path as needed
 
-
-// Configure multer for file uploads
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
