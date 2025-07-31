@@ -22,6 +22,7 @@ function uploadToCloudinary(buffer, folder) {
     stream.end(buffer);
   });
 }
+
 // Get all awards
 router.get('/', async (req, res) => {
     try {
@@ -38,8 +39,10 @@ router.get('/', async (req, res) => {
 router.post('/', auth, upload.single('image'), async (req, res) => {
     try {
         const award = new Award(req.body);
-        const imageUrl = await uploadToCloudinary(req.file.buffer, 'awards');
-        award.image = imageUrl;
+        if (req.file) {
+            const imageUrl = await uploadToCloudinary(req.file.buffer, 'awards');
+            award.image = imageUrl;
+        }
         await award.save();
         res.status(201).json(award);
     } catch (error) {
@@ -61,7 +64,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Update award
-router.patch('/:id', auth, async (req, res) => {
+router.patch('/:id', auth, upload.single('image'), async (req, res) => {
     const updates = Object.keys(req.body);
     const allowedUpdates = ['title', 'issuer', 'date', 'description', 'category', 'link', 'image'];
     const isValidOperation = updates.every(update => allowedUpdates.includes(update));

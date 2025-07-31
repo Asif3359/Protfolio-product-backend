@@ -6,6 +6,10 @@ const researchSchema = new mongoose.Schema({
         enum: ['Publication', 'Current Research'],
         required: true
     },
+    image: {
+        type: String,
+        required: true
+    },
     title: {
         type: String,
         required: true

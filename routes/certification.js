@@ -2,6 +2,26 @@ const express = require('express');
 const router = express.Router();
 const Certification = require('../models/Certification');
 const auth = require('../middleware/auth');
+const multer = require('multer');
+const path = require('path');
+const cloudinary = require('../cloudinary'); // adjust path as needed
+
+function uploadToCloudinary(buffer, folder) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url);
+      }
+    );
+    stream.end(buffer);
+  });
+}
+
+// Configure multer for research image uploads
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 // Get all certifications
 router.get('/', async (req, res) => {
@@ -14,9 +34,14 @@ router.get('/', async (req, res) => {
 });
 
 // Create certification
-router.post('/', auth, async (req, res) => {
+router.post('/', auth, upload.single('image'), async (req, res) => {
     try {
         const certification = new Certification(req.body);
+        if (req.file) {
+            const imageUrl = await uploadToCloudinary(req.file.buffer, 'certification');
+            certification.image = imageUrl;
+            await certification.save();
+        }
         await certification.save();
         res.status(201).json(certification);
     } catch (error) {
@@ -65,7 +90,7 @@ router.patch('/:id', auth, async (req, res) => {
 });
 
 // Update certification (PUT)
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', auth, upload.single('image'), async (req, res) => {
     try {
         const certification = await Certification.findByIdAndUpdate(
             req.params.id,
@@ -74,6 +99,11 @@ router.put('/:id', auth, async (req, res) => {
         );
         if (!certification) {
             return res.status(404).json({ error: 'Certification not found' });
+        }
+        if (req.file) {
+            const imageUrl = await uploadToCloudinary(req.file.buffer, 'certification');
+            certification.image = imageUrl;
+            await certification.save();
         }
         res.json(certification);
     } catch (error) {
