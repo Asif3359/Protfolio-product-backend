@@ -38,6 +38,11 @@ router.get('/', async (req, res) => {
 // Create research work
 router.post('/', auth, upload.single('image'), async (req, res) => {
     try {
+        // Check if image file is uploaded
+        if (!req.file) {
+            return res.status(400).json({ error: 'Image is required' });
+        }
+
         // Parse authors if it's a JSON string
         if (req.body.authors && typeof req.body.authors === 'string') {
             try {
@@ -47,13 +52,18 @@ router.post('/', auth, upload.single('image'), async (req, res) => {
             }
         }
 
-        const research = new Research(req.body);
+        // Upload image to Cloudinary first
+        const imageUrl = await uploadToCloudinary(req.file.buffer, 'research');
+        
+        // Create research document with image URL
+        const researchData = {
+            ...req.body,
+            image: imageUrl
+        };
+        
+        const research = new Research(researchData);
         await research.save();
-        if (req.file) {
-            const imageUrl = await uploadToCloudinary(req.file.buffer, 'research');
-            research.image = imageUrl;
-            await research.save();
-        }
+        
         res.status(201).json(research);
     } catch (error) {
         res.status(400).json({ error: error.message });
