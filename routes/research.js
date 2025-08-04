@@ -4,7 +4,7 @@ const Research = require('../models/Research');
 const auth = require('../middleware/auth');
 const multer = require('multer');
 const path = require('path');
-const cloudinary = require('../cloudinary'); // adjust path as needed
+const cloudinary = require('../cloudinary'); 
 
 function uploadToCloudinary(buffer, folder) {
   return new Promise((resolve, reject) => {
