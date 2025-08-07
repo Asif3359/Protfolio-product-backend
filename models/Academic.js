@@ -24,7 +24,9 @@ const academicSchema = new mongoose.Schema({
     endDate: Date,
     description: String,
     achievements: [String],
+    outOf: Number,
     gpa: Number,
+
     ownerEmail: { type: String, required: true },
 }, { timestamps: true });
 

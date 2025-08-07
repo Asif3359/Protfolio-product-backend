@@ -119,6 +119,11 @@ router.put('/:id', auth, upload.single('logo'), async (req, res) => {
         } else if (typeof updateData.gpa === "string") {
             updateData.gpa = Number(updateData.gpa);
         }
+        if (updateData.outOf === "null" || updateData.outOf === "" || updateData.outOf === undefined) {
+            updateData.outOf = null;
+        } else if (typeof updateData.outOf === "string") {
+            updateData.outOf = Number(updateData.outOf);
+        }
 
         if (req.file) {
             const logoUrl = await uploadToCloudinary(req.file.buffer, 'academic_logos');
